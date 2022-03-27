@@ -13,6 +13,9 @@ database = Database(host, dbname, user, password)
 
 @dp.message_handler(commands=['start'])
 async def add_user_id(msg: types.Message):
+    
+    """Добавление айди юзеров"""
+    
     id_user = msg.from_user.id
     await msg.answer(database.add_users_id(id_user))
     await msg.answer("Приветствую, введите /info,чтобы узнать о командах")
@@ -20,6 +23,9 @@ async def add_user_id(msg: types.Message):
 
 @dp.message_handler(commands=['add_photo'], state=None)
 async def get_photo_id(msg: types.Message):
+    
+    """Запрашиваем категорию и фото для хранения используя FSM"""
+    
     await bot.send_message(msg.from_user.id,
                            "Отправьте категорею, в которой вы сохраните фото\nУкажите категорию по примеру: #котики")
     await States.state1.set()
@@ -53,6 +59,9 @@ async def answer2(msg: types.Message, state: FSMContext):
 
 @dp.message_handler(commands=['print_photo'])
 async def print_photos(msg: types.Message):
+    
+    """Выводим фотографии по выбранной категории"""
+    
     id_ = msg.from_user.id
     categories = msg.text.replace("/print_photo", "").strip()
     list_photos = database.print_photos(id_, categories)
@@ -70,16 +79,20 @@ async def print_photos(msg: types.Message):
 
 @dp.message_handler(commands=['info'])
 async def info_func(msg: types.Message):
+    
+    """Информируем о командах"""
+    
     await msg.answer(info)
 
-
-@dp.message_handler(commands=['info_count_users'])
-async def info_users(msg: types.Message):
-    await msg.answer(database.info_count_users())
 
 
 @dp.message_handler()
 async def hash_check(msg: types.Message):
+    
+    """ Проверяем обычное сообщение на наличие # в начале,если имеется,то убираем знак
+        и добовляем название категории в бд
+    """
+    
     id_user = msg.from_user.id
     message = msg.text
     if message.startswith('#'):
