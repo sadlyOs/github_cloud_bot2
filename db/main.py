@@ -57,25 +57,9 @@ class Database:
             list_photos.append(i[0])
         return list_photos
 
-    def info_count_users(self):
-        self.cursor.execute("SELECT COUNT(user_id_for_count) FROM users WHERE user_id_for_count != NULL")
-        return self.cursor.fetchone()
 
     def close(self):
         self.conn.close()
 
 
-"""
-conn = psycopg2.connect(database=dbname, user=user, password=password, host=host)
-cursor = conn.cursor()
-
-cursor.execute('''CREATE TABLE users(
-    id SERIAL PRIMARY KEY,
-    user_id INT,
-    categories VARCHAR(30),
-    photo_id VARCHAR(200),
-    user_id_for_count INT   
-);''')
-conn.commit()
-"""
 
