@@ -1,6 +1,4 @@
 import psycopg2
-from db.password import host, dbname, user, password
-
 
 class Database:
     def __init__(self, host, dbname, user, password):
