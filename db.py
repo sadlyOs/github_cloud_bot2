@@ -1,6 +1,8 @@
 import psycopg2
 
+
 class Database:
+
     def __init__(self, host, dbname, user, password):
         self.conn = psycopg2.connect(host=host, database=dbname, user=user, password=password)
         self.cursor = self.conn.cursor()
@@ -55,9 +57,6 @@ class Database:
             list_photos.append(i[0])
         return list_photos
 
-
     def close(self):
         self.conn.close()
-
-
 
