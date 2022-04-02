@@ -1,21 +1,25 @@
-from db.password import host, dbname, user, password
 from aiogram.utils.exceptions import ValidationError
 from aiogram.dispatcher import FSMContext
 from aiogram import types, executor
 from aiogram.types import InputMediaPhoto
 from dispatchers import bot, dp
-from db.main import Database
-from states.State import States
-from info_file import info
+from db import Database
+from state import States
+from config import PG_HOST, PG_DB, PG_USER, PG_PASSWORD
 
-database = Database(host, dbname, user, password)
-
+INFO_FILE = 'info.txt'
+database = Database(
+        PG_HOST,
+        PG_DB,
+        PG_USER,
+        PG_PASSWORD
+)
 
 @dp.message_handler(commands=['start'])
 async def add_user_id(msg: types.Message):
-    
+
     """Добавление айди юзеров"""
-    
+
     id_user = msg.from_user.id
     await msg.answer(database.add_users_id(id_user))
     await msg.answer("Приветствую, введите /info,чтобы узнать о командах")
@@ -23,9 +27,9 @@ async def add_user_id(msg: types.Message):
 
 @dp.message_handler(commands=['add_photo'], state=None)
 async def get_photo_id(msg: types.Message):
-    
+
     """Запрашиваем категорию и фото для хранения используя FSM"""
-    
+
     await bot.send_message(msg.from_user.id,
                            "Отправьте категорею, в которой вы сохраните фото\nУкажите категорию по примеру: #котики")
     await States.state1.set()
@@ -59,9 +63,9 @@ async def answer2(msg: types.Message, state: FSMContext):
 
 @dp.message_handler(commands=['print_photo'])
 async def print_photos(msg: types.Message):
-    
+
     """Выводим фотографии по выбранной категории"""
-    
+
     id_ = msg.from_user.id
     categories = msg.text.replace("/print_photo", "").strip()
     list_photos = database.print_photos(id_, categories)
@@ -79,20 +83,20 @@ async def print_photos(msg: types.Message):
 
 @dp.message_handler(commands=['info'])
 async def info_func(msg: types.Message):
-    
+
     """Информируем о командах"""
-    
-    await msg.answer(info)
+
+    await msg.answer(open(INFO_FILE).read())
 
 
 
 @dp.message_handler()
 async def hash_check(msg: types.Message):
-    
+
     """ Проверяем обычное сообщение на наличие # в начале,если имеется,то убираем знак
         и добовляем название категории в бд
     """
-    
+
     id_user = msg.from_user.id
     message = msg.text
     if message.startswith('#'):
@@ -104,3 +108,4 @@ async def hash_check(msg: types.Message):
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
+
